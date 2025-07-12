@@ -8,18 +8,19 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Main Navbar with logo, search, user menu */}
-      <Navbar onMobileMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar - Always visible on desktop, toggleable on mobile */}
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      <div className="flex">
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="flex-1 flex flex-col">
+        {/* Main Navbar */}
+        <Navbar onMobileMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
-        {/* Main content area with proper spacing from navbar */}
-        <main className="flex-1 min-h-[calc(100vh-4rem)]">
+        {/* Main content area */}
+        <main className="flex-1 overflow-auto">
           <div className="container mx-auto px-4 py-6">
             {children}
           </div>

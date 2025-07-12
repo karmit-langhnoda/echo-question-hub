@@ -68,29 +68,37 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <motion.aside
-        initial={{ x: -300 }}
+        initial={false}
         animate={{ x: isOpen ? 0 : -300 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className={cn(
-          "fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-72 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
-          "md:sticky md:block md:translate-x-0",
-          !isOpen && "md:w-72"
+          "fixed left-0 top-0 z-50 h-screen w-80 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
+          "lg:relative lg:z-auto lg:translate-x-0 lg:bg-background",
+          !isOpen && "lg:block"
         )}
       >
         <div className="flex h-full flex-col">
           {/* Mobile close button */}
-          <div className="flex items-center justify-between p-4 md:hidden">
+          <div className="flex items-center justify-between p-4 lg:hidden border-b">
             <h2 className="text-lg font-semibold">Menu</h2>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <X className="h-5 w-5" />
             </Button>
+          </div>
+
+          {/* Logo/Brand */}
+          <div className="hidden lg:flex items-center gap-2 p-4 border-b">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">Q</span>
+            </div>
+            <span className="font-semibold text-lg">QuestionHub</span>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-6">

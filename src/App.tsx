@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from "@/components/ui/toaster";
@@ -36,11 +37,19 @@ const App = () => {
           <Router>
             <div className="min-h-screen bg-background text-foreground">
               <Routes>
-                {/* Public routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                {/* All routes now use Layout including login/register */}
+                <Route path="/login" element={
+                  <Layout>
+                    <Login />
+                  </Layout>
+                } />
                 
-                {/* Protected routes with layout */}
+                <Route path="/register" element={
+                  <Layout>
+                    <Register />
+                  </Layout>
+                } />
+                
                 <Route path="/" element={
                   <Layout>
                     <Home />
