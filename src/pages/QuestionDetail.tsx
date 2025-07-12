@@ -13,7 +13,8 @@ import {
   Clock,
   Eye,
   User,
-  Edit
+  Edit,
+  Plus
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -96,6 +97,16 @@ const QuestionDetail: React.FC = () => {
         <span className="mx-2">›</span>
         <span className="text-foreground">{question.title}</span>
       </nav>
+
+      {/* Ask Question Button - Prominent placement */}
+      <div className="flex justify-end">
+        <Button asChild className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+          <Link to={isAuthenticated ? "/ask" : "/login"}>
+            <Plus className="h-4 w-4 mr-2" />
+            Ask Question
+          </Link>
+        </Button>
+      </div>
 
       {/* Question */}
       <motion.div
@@ -309,7 +320,7 @@ const QuestionDetail: React.FC = () => {
         ))}
       </div>
 
-      {/* Answer Form */}
+      {/* Answer Form - Available to all authenticated users */}
       {isAuthenticated ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -321,7 +332,7 @@ const QuestionDetail: React.FC = () => {
               <h3 className="text-lg font-semibold mb-4">Your Answer</h3>
               <form onSubmit={handleSubmitAnswer} className="space-y-4">
                 <Textarea
-                  placeholder="Write your answer here..."
+                  placeholder="Write your answer here... Use @ to mention other users"
                   rows={8}
                   value={newAnswer}
                   onChange={(e) => setNewAnswer(e.target.value)}

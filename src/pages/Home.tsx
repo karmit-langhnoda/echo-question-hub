@@ -42,14 +42,12 @@ const Home: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-3">
-          {isAuthenticated && (
-            <Button asChild className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-              <Link to="/ask">
-                <Plus className="h-4 w-4 mr-2" />
-                Ask Question
-              </Link>
-            </Button>
-          )}
+          <Button asChild className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+            <Link to={isAuthenticated ? "/ask" : "/login"}>
+              <Plus className="h-4 w-4 mr-2" />
+              Ask Question
+            </Link>
+          </Button>
         </div>
       </div>
 
@@ -96,7 +94,7 @@ const Home: React.FC = () => {
         ))}
       </motion.div>
 
-      {/* Empty state for unauthenticated users */}
+      {/* Call to Action for unauthenticated users */}
       {!isAuthenticated && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}

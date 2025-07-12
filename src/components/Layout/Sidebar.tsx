@@ -15,12 +15,14 @@ import {
   Bookmark,
   Award,
   Calendar,
-  Filter
+  Filter,
+  Plus
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Separator } from '../ui/separator';
 import { cn } from '../../lib/utils';
+import { useAuthStore } from '../../store/authStore';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -56,6 +58,7 @@ const popularTags = [
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
+  const { isAuthenticated } = useAuthStore();
 
   return (
     <>
@@ -91,6 +94,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
+            {/* Ask Question Button */}
+            {isAuthenticated && (
+              <div>
+                <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                  <Link to="/ask" onClick={onClose}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ask Question
+                  </Link>
+                </Button>
+              </div>
+            )}
+
             {/* Main Navigation */}
             <div>
               <h3 className="mb-3 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">

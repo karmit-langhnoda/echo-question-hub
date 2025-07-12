@@ -2,67 +2,77 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Loader2, User } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Upload, Camera } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { useAuthStore } from '../store/authStore';
 import { useToast } from '../hooks/use-toast';
-import { cn } from '../lib/utils';
 
 const avatarOptions = [
-  { id: 1, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=1', name: 'Avatar 1' },
-  { id: 2, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=2', name: 'Avatar 2' },
-  { id: 3, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=3', name: 'Avatar 3' },
-  { id: 4, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=4', name: 'Avatar 4' },
-  { id: 5, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=5', name: 'Avatar 5' },
-  { id: 6, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=6', name: 'Avatar 6' },
-  { id: 7, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=7', name: 'Avatar 7' },
-  { id: 8, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=8', name: 'Avatar 8' },
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Princess',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Mittens',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Smokey',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Lucky',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Patches',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Whiskers',
 ];
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedAvatar, setSelectedAvatar] = useState<string>(avatarOptions[0].url);
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [selectedAvatar, setSelectedAvatar] = useState(avatarOptions[0]);
+  const [customAvatar, setCustomAvatar] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   
   const { login, isLoading } = useAuthStore();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const validateForm = () => {
-    const newErrors: { email?: string; password?: string } = {};
-    
-    if (!email) {
+    const newErrors: Record<string, string> = {};
+
+    if (!email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = 'Please enter a valid email';
     }
-    
-    if (!password) {
+
+    if (!password.trim()) {
       newErrors.password = 'Password is required';
     } else if (password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setCustomAvatar(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
-    
+
     try {
       await login(email, password);
       toast({
         title: "Welcome back!",
-        description: "You have successfully logged in.",
+        description: "You have been successfully logged in.",
       });
       navigate('/');
     } catch (error) {
@@ -75,55 +85,88 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-gray-900 p-4">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm">
-          <CardHeader className="text-center space-y-2">
-            <div className="mx-auto h-12 w-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
-              <span className="text-white font-bold text-xl">Q</span>
+        <Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl">
+          <CardHeader className="text-center space-y-4">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mx-auto w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center"
+            >
+              <span className="text-2xl font-bold text-white">Q</span>
+            </motion.div>
+            <div>
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Welcome Back
+              </CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">
+                Sign in to your account to continue
+              </CardDescription>
             </div>
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Welcome Back
-            </CardTitle>
-            <CardDescription>
-              Sign in to your StackIt account
-            </CardDescription>
           </CardHeader>
 
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-6">
-              {/* Avatar Selection */}
-              <div className="space-y-3">
-                <Label className="text-sm font-medium">Choose Your Avatar</Label>
-                <div className="grid grid-cols-4 gap-3">
-                  {avatarOptions.map((avatar) => (
-                    <button
-                      key={avatar.id}
-                      type="button"
-                      onClick={() => setSelectedAvatar(avatar.url)}
-                      className={cn(
-                        "relative rounded-full transition-all hover:scale-105",
-                        selectedAvatar === avatar.url 
-                          ? "ring-2 ring-purple-500 ring-offset-2 ring-offset-background" 
-                          : "hover:ring-2 hover:ring-purple-300 hover:ring-offset-2 hover:ring-offset-background"
-                      )}
-                    >
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={avatar.url} alt={avatar.name} />
-                        <AvatarFallback>
-                          <User className="h-6 w-6" />
-                        </AvatarFallback>
-                      </Avatar>
-                    </button>
-                  ))}
-                </div>
+          <CardContent className="space-y-6">
+            {/* Avatar Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Choose Your Avatar</Label>
+              
+              {/* Custom Avatar Upload */}
+              <div className="flex items-center gap-3 p-3 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg hover:border-purple-300 transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                  id="avatar-upload"
+                />
+                <Label htmlFor="avatar-upload" className="cursor-pointer flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600 transition-colors">
+                  <Upload className="h-4 w-4" />
+                  Upload Custom Avatar
+                </Label>
               </div>
 
+              {/* Avatar Options Grid */}
+              <div className="grid grid-cols-4 gap-3">
+                {avatarOptions.map((avatar, index) => (
+                  <motion.button
+                    key={index}
+                    type="button"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setSelectedAvatar(avatar);
+                      setCustomAvatar(null);
+                    }}
+                    className={`relative w-full aspect-square rounded-full border-2 overflow-hidden transition-all ${
+                      selectedAvatar === avatar && !customAvatar
+                        ? 'border-purple-500 ring-2 ring-purple-200 dark:ring-purple-800'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-purple-300'
+                    }`}
+                  >
+                    <img src={avatar} alt={`Avatar ${index + 1}`} className="w-full h-full object-cover" />
+                  </motion.button>
+                ))}
+              </div>
+
+              {/* Custom Avatar Preview */}
+              {customAvatar && (
+                <div className="flex justify-center">
+                  <div className="relative w-16 h-16 rounded-full border-2 border-purple-500 ring-2 ring-purple-200 dark:ring-purple-800 overflow-hidden">
+                    <img src={customAvatar} alt="Custom avatar" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email Field */}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -131,14 +174,18 @@ const Login: React.FC = () => {
                   type="email"
                   placeholder="Enter your email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
+                  }}
+                  className={errors.email ? 'border-red-500 focus:border-red-500' : ''}
                 />
                 {errors.email && (
                   <p className="text-sm text-red-500">{errors.email}</p>
                 )}
               </div>
 
+              {/* Password Field */}
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
@@ -147,20 +194,23 @@ const Login: React.FC = () => {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={errors.password ? 'border-red-500 focus-visible:ring-red-500 pr-10' : 'pr-10'}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (errors.password) setErrors(prev => ({ ...prev, password: '' }));
+                    }}
+                    className={errors.password ? 'border-red-500 focus:border-red-500 pr-10' : 'pr-10'}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4 text-gray-400" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Eye className="h-4 w-4 text-gray-400" />
                     )}
                   </Button>
                 </div>
@@ -168,12 +218,11 @@ const Login: React.FC = () => {
                   <p className="text-sm text-red-500">{errors.password}</p>
                 )}
               </div>
-            </CardContent>
 
-            <CardFooter className="flex flex-col space-y-4">
+              {/* Login Button */}
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-2.5"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -185,18 +234,19 @@ const Login: React.FC = () => {
                   'Sign In'
                 )}
               </Button>
+            </form>
 
-              <div className="text-center text-sm">
-                <span className="text-muted-foreground">Don't have an account? </span>
-                <Link
-                  to="/register"
-                  className="font-medium text-purple-600 hover:text-purple-700 transition-colors"
-                >
-                  Sign up
-                </Link>
-              </div>
-            </CardFooter>
-          </form>
+            {/* Sign Up Link */}
+            <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+              Don't have an account?{' '}
+              <Link
+                to="/register"
+                className="font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300 transition-colors"
+              >
+                Sign up here
+              </Link>
+            </div>
+          </CardContent>
         </Card>
       </motion.div>
     </div>
