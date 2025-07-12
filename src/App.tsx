@@ -16,6 +16,7 @@ import AskQuestion from './pages/AskQuestion';
 import QuestionDetail from './pages/QuestionDetail';
 import Profile from './pages/Profile';
 import Tags from './pages/Tags';
+import Users from './pages/Users';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -46,6 +47,12 @@ const App = () => {
                   </Layout>
                 } />
                 
+                <Route path="/questions" element={
+                  <Layout>
+                    <Home />
+                  </Layout>
+                } />
+                
                 <Route path="/questions/:id" element={
                   <Layout>
                     <QuestionDetail />
@@ -55,6 +62,12 @@ const App = () => {
                 <Route path="/tags" element={
                   <Layout>
                     <Tags />
+                  </Layout>
+                } />
+                
+                <Route path="/users" element={
+                  <Layout>
+                    <Users />
                   </Layout>
                 } />
                 

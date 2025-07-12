@@ -2,17 +2,31 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, User } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { useAuthStore } from '../store/authStore';
 import { useToast } from '../hooks/use-toast';
+import { cn } from '../lib/utils';
+
+const avatarOptions = [
+  { id: 1, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=1', name: 'Avatar 1' },
+  { id: 2, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=2', name: 'Avatar 2' },
+  { id: 3, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=3', name: 'Avatar 3' },
+  { id: 4, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=4', name: 'Avatar 4' },
+  { id: 5, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=5', name: 'Avatar 5' },
+  { id: 6, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=6', name: 'Avatar 6' },
+  { id: 7, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=7', name: 'Avatar 7' },
+  { id: 8, url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=8', name: 'Avatar 8' },
+];
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedAvatar, setSelectedAvatar] = useState<string>(avatarOptions[0].url);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   
@@ -71,7 +85,7 @@ const Login: React.FC = () => {
         <Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm">
           <CardHeader className="text-center space-y-2">
             <div className="mx-auto h-12 w-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
-              <span className="text-white font-bold text-xl">S</span>
+              <span className="text-white font-bold text-xl">Q</span>
             </div>
             <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               Welcome Back
@@ -82,7 +96,34 @@ const Login: React.FC = () => {
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
+              {/* Avatar Selection */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Choose Your Avatar</Label>
+                <div className="grid grid-cols-4 gap-3">
+                  {avatarOptions.map((avatar) => (
+                    <button
+                      key={avatar.id}
+                      type="button"
+                      onClick={() => setSelectedAvatar(avatar.url)}
+                      className={cn(
+                        "relative rounded-full transition-all hover:scale-105",
+                        selectedAvatar === avatar.url 
+                          ? "ring-2 ring-purple-500 ring-offset-2 ring-offset-background" 
+                          : "hover:ring-2 hover:ring-purple-300 hover:ring-offset-2 hover:ring-offset-background"
+                      )}
+                    >
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={avatar.url} alt={avatar.name} />
+                        <AvatarFallback>
+                          <User className="h-6 w-6" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
